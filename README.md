@@ -2,6 +2,10 @@
 
 AppRecom is a module that can be dropped into any JavaScript project.
 
+## Install
+
+`npm install apprecom`
+
 This system uses records from location-app relationships to predict the best app categories to recommend for a location.
 
 The two main methods are:
