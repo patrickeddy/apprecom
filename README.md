@@ -21,7 +21,7 @@ train(data, min_support, min_conf)
 getApps(location)
 ```
 
-[Check out the documentation for more information here.](http://patrickeddy.github.io/apprecom/AppRecom.html)
+Check out the documentation for more information [here](http://patrickeddy.github.io/apprecom/AppRecom.html).
 
 ## Implementation
 
