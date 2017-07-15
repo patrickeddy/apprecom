@@ -22,3 +22,7 @@ getApps(location)
 ```
 
 [Check out the documentation for more information here.](http://patrickeddy.github.io/apprecom/AppRecom.html)
+
+## Implementation
+
+Check out [ARI](https://github.com/patrickeddy/ari) - a CLI implementation using this algorithm.
