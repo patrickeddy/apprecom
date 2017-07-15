@@ -42,7 +42,7 @@ class AppRecom{
    * @param {Array<Object>} data - data to find association rules on.
    * @param {Decimal} min_support - the minimum support percentage for an itemset (0.0 - 1.0)
    * @param {Decimal} min_conf - the minimum confidence percentage for a rule (0.0 - 1.0)
-   * @return {Promise}
+   * @returns {Promise}
    */
   train(data, min_support = 0.1, min_conf = 0.9){
     return new Promise((res, rej)=>{
@@ -66,7 +66,7 @@ class AppRecom{
    * <p>This function returns a JavaScript Promise.</p>
    *
    * @param {String} locationCategory - the category of the location (e.g. 'cafe')
-   * @return {Promise} appCategories - the categories of apps that match this location
+   * @returns {Promise} appCategories - the categories of apps that match this location
    */
   getApps(location){
     return new Promise((res, rej)=>{
@@ -93,7 +93,7 @@ class AppRecom{
    * @private
    * @param {Array<Object>} data - the data to find itemsets on
    * @param {Decimal} min_support - the minimum support percentage to include this item set
-   * @return {Set} optimal itemset
+   * @returns {Set} optimal itemset
    */
   _getOptimalItemset(data, min_support){
     return this._itemsetPrune(this._countItemsets(data), data.length, min_support);
@@ -105,7 +105,7 @@ class AppRecom{
    * @param {Map<String, Number>} itemsets - item entry as JSON Array, item frequency
    * @param {Number} length - length of the original data
    * @param {Number} min_support - the minimum support accepted for an itemset
-   * @return {Set<String>} keepers - returns a set of itemset JSON Arrays
+   * @returns {Set<String>} keepers - returns a set of itemset JSON Arrays
    */
   _itemsetPrune(itemsetSupport, length, min_support){
     const keepers = new Map(itemsetSupport);
@@ -120,7 +120,7 @@ class AppRecom{
    * Counts the number of itemsets in the data.
    * @private
    * @param {Array<Object>} data - the data to count the itemsets on
-   * @return {Map<String, Number>} itemsetSupport - the itemset numbers
+   * @returns {Map<String, Number>} itemsetSupport - the itemset numbers
    */
   _countItemsets(data){
     const itemsetSupport = new Map();
@@ -138,7 +138,7 @@ class AppRecom{
    * @param {Array<Object>} ogData - the original data to count value frequencies on
    * @param {Array<Object>} itemsets - the itemsets to fetch rules from.
    * @param {Decimal} min_conf - the minimum confidence for a rule to be accepted
-   * @return {Object} rules
+   * @returns {Object} rules
    */
   _getRules(ogData, itemsets, min_conf){
     const rules = {};
