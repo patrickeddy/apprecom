@@ -1,0 +1,23 @@
+{
+  "name": "apprecom",
+  "version": "0.8.0",
+  "description": "Location based app recommendation system.",
+  "main": "AppRecom.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patrickeddy/apprecom.git"
+  },
+  "keywords": [
+    "app",
+    "recommendation",
+    "machine",
+    "learning",
+    "location"
+  ],
+  "author": "patrickeddy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/patrickeddy/apprecom/issues"
+  },
+  "homepage": "https://github.com/patrickeddy/apprecom#readme"
+}
