@@ -1,4 +1,4 @@
-# AppRecom - Location based app recommendation system.
+# AppRecom - Location based app recommendation algorithm.
 
 AppRecom is a module that can be dropped into any JavaScript project.
 
