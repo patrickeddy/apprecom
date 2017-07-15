@@ -21,10 +21,10 @@ class AppRecom{
 
   /**
    * Instantiate an AppRecom object for training and fetching recommendations.
-   * @param {String} rulesDirectory - the directory to save the rules to.
    * @param {Boolean} debug - option for console log debugging
+   * @param {String} rulesDirectory - the directory to save the rules to.
    */
-  constructor(rulesDirectory = "./", debug = false){
+  constructor(debug = false, rulesDirectory = "./node_modules/apprecom/"){
     this.rulesDirectory = rulesDirectory;
     this.itemsets = [];
     this.rules = [];

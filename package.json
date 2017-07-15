@@ -1,6 +1,6 @@
 {
   "name": "apprecom",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "description": "Location based app recommendation system.",
   "main": "./lib/AppRecom.js",
   "repository": {
