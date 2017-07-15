@@ -25,4 +25,4 @@ getApps(location)
 
 ## Implementation
 
-Check out [ARI](https://github.com/patrickeddy/ari) - a CLI implementation using this algorithm.
+Check out [ARI - an AppRecom CLI implementation]((https://github.com/patrickeddy/ari)) that uses this module.
