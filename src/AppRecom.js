@@ -78,7 +78,7 @@ class AppRecom{
           rej(err); // error if couldn't read
         } else {
           const rules = parse(data); // get the rules object
-          if (this.DEBUG) print(`Fetched rules are: ${rules}`);
+          if (this.DEBUG) print(`Fetched rules are: ${jstr(rules)}`);
           const appRecommendations = rules[location] ? rules[location] : [];
           if (this.DEBUG) print(`Recommendations:\n${jstr(appRecommendations)}`);
           res(appRecommendations);
