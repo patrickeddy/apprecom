@@ -70,20 +70,14 @@ class AppRecom{
    */
   getApps(location){
     return new Promise((res, rej)=>{
-      if (this.DEBUG){
-        print("==============\nRECOMMENDATIONS DEBUG\n"); print(`Location is: ${location}`);
-      }
       fs.readFile(this.rulesDirectory + RULES_FILENAME, RULES_ENCODING, (err, data)=>{
         if (err){
           rej(err); // error if couldn't read
         } else {
           const rules = parse(data); // get the rules object
-          if (this.DEBUG) print(`Fetched rules are: ${jstr(rules)}`);
           const appRecommendations = rules[location] ? rules[location] : [];
-          if (this.DEBUG) print(`Recommendations:\n${jstr(appRecommendations)}`);
           res(appRecommendations);
         }
-        if (this.DEBUG) print("\n==============");
       });
     });
   }
@@ -105,7 +99,7 @@ class AppRecom{
    * @param {Map<String, Number>} itemsets - item entry as JSON Array, item frequency
    * @param {Number} length - length of the original data
    * @param {Number} min_support - the minimum support accepted for an itemset
-   * @returns {Set<String>} keepers - returns a set of itemset JSON Arrays
+   * @returns {Map<String, Number>} keepers - a map of rules and support
    */
   _itemsetPrune(itemsetSupport, length, min_support){
     const keepers = new Map(itemsetSupport);
@@ -113,7 +107,7 @@ class AppRecom{
       if ((support / length) < min_support) keepers.delete(instance); // keep this value because it satisfies the min support.
     }
     if (this.DEBUG) print(`==============\nITEMSET DEBUG\n${jstr([...itemsetSupport]).replace(/],\[\"\[/g, "],\n\[\"\[")}\n==============`); // debug log
-    return [...keepers.keys()]; // return only the keys
+    return keepers; // return the keepers with their supports
   }
 
   /**
@@ -136,23 +130,35 @@ class AppRecom{
    * Gets the rules from the itemsets according to the minimum confidence.
    * @private
    * @param {Array<Object>} ogData - the original data to count value frequencies on
-   * @param {Array<Object>} itemsets - the itemsets to fetch rules from.
+   * @param {Map<String, Number>} itemsets - the itemsets to fetch rules from.
    * @param {Decimal} min_conf - the minimum confidence for a rule to be accepted
    * @returns {Object} rules
    */
   _getRules(ogData, itemsets, min_conf){
     const rules = {};
-    itemsets.forEach((itemset)=>{
+    [...itemsets.keys()].forEach((itemset)=>{
       const arr = parse(itemset);
       let hyp = arr[0];
       let con = arr[1];
-      if (this._valueFreq(ogData, hyp) / this._valueFreq(ogData, con) >= min_conf) this._addRules(rules, hyp, con); // could do this recursively,
-      else if (this._valueFreq(ogData, con) / this._valueFreq(ogData, hyp) >= min_conf) this._addRules(rules, con, hyp); // but in our case our data will only have 2 attributes
+      const hypFreq = this._valueFreq(ogData, hyp);
+      const conFreq = this._valueFreq(ogData, con);
+      const count = itemsets.get(itemset);
+      if (hypFreq / conFreq >= min_conf) this._addRules(rules, hyp, con, count); // could do this recursively,
+      else if (conFreq / hypFreq >= min_conf) this._addRules(rules, con, hyp, count); // but in our case our data will only have 2 attributes
     });
-    if (this.DEBUG) print(`==============\nRULES DEBUG\n${jstr(rules)
-        .replace("{", "{\n")
-        .replace("}", "\n}")
-        .replace("],", "],\n")}\n==============`);
+
+    if (this.DEBUG) print("==============\nRULES DEBUG\n");
+    for (let key of Object.keys(rules)){
+      rules[key].sort((a, b)=> b.count - a.count); // sort the rules on count
+      if (this.DEBUG) print(`${key}:${jstr(rules[key])
+          .replace(/{/g, "{\n   ")
+          .replace(/}/g, "\n   }")
+          .replace(/],/g, "],\n")}\n`);
+      for (const app in rules[key]){
+        rules[key][app] = rules[key][app].app; // strip object and count value
+      }
+    }
+    if (this.DEBUG) print("\n==============");
     return rules;
   }
 
@@ -172,9 +178,10 @@ class AppRecom{
    * Adds the rules to the rules array by their hypothesis conclusion format.
    * @private
    */
-  _addRules(rules, hyp, con){
-    if (rules[hyp]) rules[hyp].push(con); // if a value already exists, append
-    else rules[hyp] = [con]; // otherwise set
+  _addRules(rules, hyp, con, count){
+    const value = {app: con, count: count};
+    if (rules[hyp]) rules[hyp].push(value); // if a value already exists, append to the rules array
+    else rules[hyp] = [value]; // otherwise set
     return rules;
   }
 }
