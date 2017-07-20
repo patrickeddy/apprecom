@@ -44,7 +44,7 @@ class AppRecom{
    * @param {Decimal} min_conf - the minimum confidence percentage for a rule (0.0 - 1.0)
    * @returns {Promise}
    */
-  train(data, min_support = 0.1, min_conf = 0.9){
+  train(data, min_support = 0.02, min_conf = 0.8){
     return new Promise((res, rej)=>{
       // Get the data organized so that we can find associations.
       const optimalItemset = this._getOptimalItemset(data, min_support);
@@ -143,8 +143,7 @@ class AppRecom{
       const hypFreq = this._valueFreq(ogData, hyp);
       const conFreq = this._valueFreq(ogData, con);
       const count = itemsets.get(itemset);
-      if (hypFreq / conFreq >= min_conf) this._addRules(rules, hyp, con, count); // could do this recursively,
-      else if (conFreq / hypFreq >= min_conf) this._addRules(rules, con, hyp, count); // but in our case our data will only have 2 attributes
+      if (hypFreq / conFreq >= min_conf) this._addRules(rules, hyp, con, count);
     });
 
     if (this.DEBUG) print("==============\nRULES DEBUG\n");
