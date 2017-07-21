@@ -45,7 +45,7 @@ class AppRecom{
    * @param {Number} testRatio - ratio of training data to test data (0.0 - 1.0)
    * @returns {Promise}
    */
-  train(data, min_support = 0.05, min_conf = 0.8, testRatio = 0.8){
+  train(data, min_support = 0.02, min_conf = 0.8, testRatio = 0.8){
     return new Promise((res, rej)=>{
       // TRAIN AND TEST
       this._testData(data, min_support, min_conf, testRatio, 5);
