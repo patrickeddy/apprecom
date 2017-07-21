@@ -265,11 +265,11 @@ function parse(string){
   return JSON.parse(string);
 }
 
-/*
-  Stole from Christoph on Stack Overflow:
-  https://stackoverflow.com/a/962890
- */
 function shuffle(array) {
+  /*
+    Stole from Christoph on Stack Overflow:
+    https://stackoverflow.com/a/962890
+   */
     var tmp, current, top = array.length;
 
     if(top) while(--top) {
