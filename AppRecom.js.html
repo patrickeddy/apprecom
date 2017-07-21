@@ -73,39 +73,10 @@ class AppRecom{
    * @param {Number} testRatio - ratio of training data to test data (0.0 - 1.0)
    * @returns {Promise}
    */
-  train(data, min_support = 0.05, min_conf = 0.8, testRatio = 0.8){
+  train(data, min_support = 0.02, min_conf = 0.8, testRatio = 0.8){
     return new Promise((res, rej)=>{
       // TRAIN AND TEST
-      // Determines an integer # for training instances
-      const numTraining = Math.round((data.length) * testRatio);
-
-      // Training data
-      // Split into two parts:
-      // [training data]=======================[training data]
-      const firstStart = 0;
-      const firstEnd = Math.round(numTraining/2);
-      const secondStart = data.length - Math.round(numTraining/2)+1;
-      const secondEnd = data.length;
-
-      let trainingSet = data.slice(firstStart, firstEnd); // add a bit of the first bit
-      trainingSet = trainingSet.concat(data.slice(secondStart, secondEnd)); // add the last bit
-      const trainingItemset = this._getOptimalItemset(trainingSet, min_support);
-      const trainingRules = this._getRules(trainingSet, trainingItemset, min_conf);
-
-      // Testing data
-      // Takes the middle of the remaining data.
-      // [training data][testing data][training data]
-      const testStart = Math.round(numTraining/2); // start somewhere in the beginning
-      const testEnd = Math.round(data.length-(numTraining/2))// end somewhere near the end
-      const testingItemset = data.slice(testStart, testEnd);
-
-      // Logs
-      if(this.DEBUG) print(`==============\nERROR TEST\ndata length: ${data.length} - training length: ${trainingSet.length} - testing length: ${testingItemset.length}\n`);
-
-      // Get the error rate for this data.
-      const errorrate = this._testTrainingSet(trainingRules, testingItemset);
-      if(this.DEBUG) print(`Error rate: ${errorrate}`);
-
+      this._testData(data, min_support, min_conf, testRatio, 5);
       // DONE TESTING
 
       // Get final rules using all data
@@ -142,6 +113,43 @@ class AppRecom{
         }
       });
     });
+  }
+
+  /**
+   * Tests the learning by splitting into training and testing data and verifying results.
+   * @private
+   */
+  _testData(data, min_support, min_conf, testRatio, rounds){
+    let averageError = 0;
+
+    // Determines an integer # for training instances
+    const numTraining = Math.round((data.length) * testRatio);
+
+    for (let count = 0; count &lt; rounds; count++) {
+      let shuffleData = data.slice();
+      shuffleData = shuffle(shuffleData);
+
+      // Training and Testing data
+      let trainingSet = [];
+      for (let i = 0; i &lt;= numTraining; i++){
+        const item = shuffleData.pop();
+        trainingSet.push(item);
+      }
+      let testingItemset = shuffleData;
+      // Training rules
+      const trainingItemset = this._getOptimalItemset(trainingSet, min_support);
+      const trainingRules = this._getRules(trainingSet, trainingItemset, min_conf);
+
+      // Logs
+      if(this.DEBUG) print(`==============\nUNKNOWN TEST\ndata length: ${data.length} - training length: ${trainingSet.length} - testing length: ${testingItemset.length}\n`);
+
+      // Get the error rate for this data.
+      const error = this._testTrainingSet(trainingRules, testingItemset);
+      averageError += error;
+      if(this.DEBUG) print(`Round ${count+1} unknown rate: ${error}`);
+    }
+    averageError = Math.round(averageError / rounds * 100) / 100;
+    if(this.DEBUG) print(`\nAverage unknown rate: ${averageError}`);
   }
 
   /**
@@ -200,14 +208,14 @@ class AppRecom{
       if (rules[instance.pcat]) { // if we have a rule for it, lets count it
         total++;
         let correct = false;
-        print(`${total}. place cat: ${instance.pcat}`);
+        if (this.DEBUG) print(`${total}. place cat: ${instance.pcat}`);
         correct = rules[instance.pcat].indexOf(instance.acat) != -1; // check the equality of the app part of the itemset
-        print(`rule apps: ${rules[instance.pcat]}\ninstance app: ${instance.acat}`);
+        if (this.DEBUG) print(`rule apps: ${rules[instance.pcat]}\ninstance app: ${instance.acat}`);
         if (!correct) numIncorrect++;
-        print(`${correct ? "CORRECT" : "INCORRECT"}\n`);
+        if (this.DEBUG) print(`${correct ? "FOUND" : "UNKNOWN"}\n`);
       }
     }
-    if (this.DEBUG) print(`\nTotal: ${total}\nIncorrect: ${numIncorrect}`);
+    if (this.DEBUG) print(`\nTotal: ${total}\nUnknown: ${numIncorrect}`);
     const errorrate = numIncorrect / total;
     return errorrate != 0 ? Math.round(errorrate * 100) / 100 : 0;
   }
@@ -229,7 +237,8 @@ class AppRecom{
       const hypFreq = this._valueFreq(ogData, hyp);
       const conFreq = this._valueFreq(ogData, con);
       const count = itemsets.get(itemset);
-      if (hypFreq / conFreq >= min_conf) this._addRules(rules, hyp, con, count);
+      // print(`hypFreq: ${hypFreq} conFreq: ${conFreq}`);
+      if ((conFreq / hypFreq) >= min_conf) this._addRules(rules, hyp, con, count);
     });
 
     if (this.DEBUG) print("==============\nRULES DEBUG\n");
@@ -284,6 +293,23 @@ function parse(string){
   return JSON.parse(string);
 }
 
+/*
+  Stole from Christoph on Stack Overflow:
+  https://stackoverflow.com/a/962890
+ */
+function shuffle(array) {
+    var tmp, current, top = array.length;
+
+    if(top) while(--top) {
+        current = Math.floor(Math.random() * (top + 1));
+        tmp = array[current];
+        array[current] = array[top];
+        array[top] = tmp;
+    }
+
+    return array;
+}
+
 // Module export
 export default AppRecom;
 </code></pre>
@@ -296,13 +322,13 @@ export default AppRecom;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AppRecom.html">AppRecom</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AppRecom.html">AppRecom</a></li></ul><h3>Global</h3><ul><li><a href="global.html#shuffle">shuffle</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.1</a> on Fri Jul 21 2017 17:32:07 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.1</a> on Fri Jul 21 2017 21:15:28 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>
