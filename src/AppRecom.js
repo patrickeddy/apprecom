@@ -266,10 +266,10 @@ function parse(string){
 }
 
 function shuffle(array) {
-  /*
-    Stole from Christoph on Stack Overflow:
-    https://stackoverflow.com/a/962890
-   */
+    /**
+     * <p>Stole from Christoph on Stack Overflow:
+     * {@link https://stackoverflow.com/a/962890}</p>
+     */
     var tmp, current, top = array.length;
 
     if(top) while(--top) {
