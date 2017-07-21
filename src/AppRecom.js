@@ -42,11 +42,45 @@ class AppRecom{
    * @param {Array<Object>} data - data to find association rules on.
    * @param {Decimal} min_support - the minimum support percentage for an itemset (0.0 - 1.0)
    * @param {Decimal} min_conf - the minimum confidence percentage for a rule (0.0 - 1.0)
+   * @param {Number} testRatio - ratio of training data to test data (0.0 - 1.0)
    * @returns {Promise}
    */
-  train(data, min_support = 0.02, min_conf = 0.8){
+  train(data, min_support = 0.05, min_conf = 0.8, testRatio = 0.8){
     return new Promise((res, rej)=>{
-      // Get the data organized so that we can find associations.
+      // TRAIN AND TEST
+      // Determines an integer # for training instances
+      const numTraining = Math.round((data.length) * testRatio);
+
+      // Training data
+      // Split into two parts:
+      // [training data]=======================[training data]
+      const firstStart = 0;
+      const firstEnd = Math.round(numTraining/2);
+      const secondStart = data.length - Math.round(numTraining/2)+1;
+      const secondEnd = data.length;
+
+      let trainingSet = data.slice(firstStart, firstEnd); // add a bit of the first bit
+      trainingSet = trainingSet.concat(data.slice(secondStart, secondEnd)); // add the last bit
+      const trainingItemset = this._getOptimalItemset(trainingSet, min_support);
+      const trainingRules = this._getRules(trainingSet, trainingItemset, min_conf);
+
+      // Testing data
+      // Takes the middle of the remaining data.
+      // [training data][testing data][training data]
+      const testStart = Math.round(numTraining/2); // start somewhere in the beginning
+      const testEnd = Math.round(data.length-(numTraining/2))// end somewhere near the end
+      const testingItemset = data.slice(testStart, testEnd);
+
+      // Logs
+      if(this.DEBUG) print(`==============\nERROR TEST\ndata length: ${data.length} - training length: ${trainingSet.length} - testing length: ${testingItemset.length}\n`);
+
+      // Get the error rate for this data.
+      const errorrate = this._testTrainingSet(trainingRules, testingItemset);
+      if(this.DEBUG) print(`Error rate: ${errorrate}`);
+
+      // DONE TESTING
+
+      // Get final rules using all data
       const optimalItemset = this._getOptimalItemset(data, min_support);
       const rules = this._getRules(data, optimalItemset, min_conf); // get the rules
       this.rules  = rules // set the rules for the object
@@ -124,6 +158,30 @@ class AppRecom{
       itemsetSupport.set(mapKey, itemsetSupport.get(mapKey) + 1); // increment this instance by one in the map
     });
     return itemsetSupport;
+  }
+
+  /**
+   * Determines the quality of the classifier by testing the trainingSet for the error rate.
+   * @private
+   * @returns ratio of incorrectly classified instances
+   */
+  _testTrainingSet(rules, testingSet){
+    let total = 0;
+    let numIncorrect = 0;
+    for (const instance of testingSet) {
+      if (rules[instance.pcat]) { // if we have a rule for it, lets count it
+        total++;
+        let correct = false;
+        print(`${total}. place cat: ${instance.pcat}`);
+        correct = rules[instance.pcat].indexOf(instance.acat) != -1; // check the equality of the app part of the itemset
+        print(`rule apps: ${rules[instance.pcat]}\ninstance app: ${instance.acat}`);
+        if (!correct) numIncorrect++;
+        print(`${correct ? "CORRECT" : "INCORRECT"}\n`);
+      }
+    }
+    if (this.DEBUG) print(`\nTotal: ${total}\nIncorrect: ${numIncorrect}`);
+    const errorrate = numIncorrect / total;
+    return errorrate != 0 ? Math.round(errorrate * 100) / 100 : 0;
   }
 
   /**
