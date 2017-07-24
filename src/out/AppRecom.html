@@ -28,16 +28,16 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>AppRecom<span class="signature">(debug, rulesDirectory)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>AppRecom<span class="signature">(debug)</span><span class="type-signature"></span></h2>
         
             <div class="class-description"><p>AppRecom is a tool for getting app recommendations based on a user's location.</p>
 
 <p>
 The two primary methods in this class are:
-<ul>
-<li><strong>train(..)</strong></li>
-<li><strong>getAppsFor(..)</strong></li>
-</ul>
+<ol>
+<li>train()</li>
+<li>getApps()</li>
+</ol>
 
 For specific information about each method, check the method documentation.</div>
         
@@ -54,7 +54,7 @@ For specific information about each method, check the method documentation.</div
     
 
     
-    <h4 class="name" id="AppRecom"><span class="type-signature"></span>new AppRecom<span class="signature">(debug, rulesDirectory)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="AppRecom"><span class="type-signature"></span>new AppRecom<span class="signature">(debug)</span><span class="type-signature"></span></h4>
     
 
     
@@ -126,35 +126,6 @@ For specific information about each method, check the method documentation.</div
         </tr>
 
     
-
-        <tr>
-            
-                <td class="name"><code>rulesDirectory</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-                <td class="default">
-                
-                    ./node_modules/apprecom/
-                
-                </td>
-            
-
-            <td class="description last">the directory to save the rules to.</td>
-        </tr>
-
-    
     </tbody>
 </table>
 
@@ -192,7 +163,7 @@ For specific information about each method, check the method documentation.</div
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="AppRecom.js.html">AppRecom.js</a>, <a href="AppRecom.js.html#line20">line 20</a>
+        <a href="AppRecom.js.html">AppRecom.js</a>, <a href="AppRecom.js.html#line16">line 16</a>
     </li></ul></dd>
     
 
@@ -244,7 +215,7 @@ For specific information about each method, check the method documentation.</div
     
 
     
-    <h4 class="name" id="getApps"><span class="type-signature"></span>getApps<span class="signature">(locationCategory)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id="getApps"><span class="type-signature"></span>getApps<span class="signature">(locationCategory)</span><span class="type-signature"></span></h4>
     
 
     
@@ -252,8 +223,7 @@ For specific information about each method, check the method documentation.</div
 
 
 <div class="description">
-    <p>Retrieves app category recommendations that best fit this location as an array. <a href="AppRecom.html#train">train()</a> must be called before this function.</p>
-<p>This function returns a JavaScript Promise.</p>
+    <p>Retrieves app category recommendations that best fit this location as an array.</p>
 </div>
 
 
@@ -346,7 +316,7 @@ For specific information about each method, check the method documentation.</div
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="AppRecom.js.html">AppRecom.js</a>, <a href="AppRecom.js.html#line76">line 76</a>
+        <a href="AppRecom.js.html">AppRecom.js</a>, <a href="AppRecom.js.html#line56">line 56</a>
     </li></ul></dd>
     
 
@@ -369,28 +339,6 @@ For specific information about each method, check the method documentation.</div
 
 
 
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    appCategories - the categories of apps that match this location
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Promise</span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 
@@ -402,7 +350,7 @@ For specific information about each method, check the method documentation.</div
     
 
     
-    <h4 class="name" id="train"><span class="type-signature"></span>train<span class="signature">(data, min_support, min_conf, testRatio)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id="train"><span class="type-signature"></span>train<span class="signature">(data, min_support, min_conf, testRatio)</span><span class="type-signature"></span></h4>
     
 
     
@@ -414,8 +362,6 @@ For specific information about each method, check the method documentation.</div
 <p>
 {pname: "Place Name", pcat: "Place Category", aname: "App Name", acat: "App Category"}
 </p>
-
-<p>This method returns a JavaScript Promise.</p>
 </div>
 
 
@@ -601,7 +547,7 @@ For specific information about each method, check the method documentation.</div
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="AppRecom.js.html">AppRecom.js</a>, <a href="AppRecom.js.html#line48">line 48</a>
+        <a href="AppRecom.js.html">AppRecom.js</a>, <a href="AppRecom.js.html#line40">line 40</a>
     </li></ul></dd>
     
 
@@ -627,19 +573,11 @@ For specific information about each method, check the method documentation.</div
 <h5>Returns:</h5>
 
         
+<div class="param-desc">
+    rules
+</div>
 
 
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Promise</span>
-
-
-    </dd>
-</dl>
 
     
 
@@ -669,7 +607,7 @@ For specific information about each method, check the method documentation.</div
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.1</a> on Fri Jul 21 2017 21:33:48 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.1</a> on Mon Jul 24 2017 18:04:52 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

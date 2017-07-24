@@ -1,8 +1,4 @@
-// REQUIRES
-const fs = require('fs');
-
 // CONSTANTS
-const RULES_FILENAME = "apprecom_rules.txt";
 const RULES_ENCODING = "utf-8";
 
 /**
@@ -10,10 +6,10 @@ const RULES_ENCODING = "utf-8";
  *
  * <p>
  * The two primary methods in this class are:
- * <ul>
- * <li><strong>train(..)</strong></li>
- * <li><strong>getAppsFor(..)</strong></li>
- * </ul>
+ * <ol>
+ * <li>train()</li>
+ * <li>getApps()</li>
+ * </ol>
  *
  * For specific information about each method, check the method documentation.
  */
@@ -22,10 +18,8 @@ class AppRecom{
   /**
    * Instantiate an AppRecom object for training and fetching recommendations.
    * @param {Boolean} debug - option for console log debugging
-   * @param {String} rulesDirectory - the directory to save the rules to.
    */
-  constructor(debug = false, rulesDirectory = "./node_modules/apprecom/"){
-    this.rulesDirectory = rulesDirectory;
+  constructor(debug = false){
     this.itemsets = [];
     this.rules = [];
     this.DEBUG = debug;
@@ -37,54 +31,31 @@ class AppRecom{
    * {pname: "Place Name", pcat: "Place Category", aname: "App Name", acat: "App Category"}
    * </p>
    *
-   * <p>This method returns a JavaScript Promise.</p>
-   *
    * @param {Array<Object>} data - data to find association rules on.
    * @param {Decimal} min_support - the minimum support percentage for an itemset (0.0 - 1.0)
    * @param {Decimal} min_conf - the minimum confidence percentage for a rule (0.0 - 1.0)
    * @param {Number} testRatio - ratio of training data to test data (0.0 - 1.0)
-   * @returns {Promise}
+   * @returns rules
    */
   train(data, min_support = 0.02, min_conf = 0.8, testRatio = 0.8){
-    return new Promise((res, rej)=>{
-      // TRAIN AND TEST
-      this._testData(data, min_support, min_conf, testRatio, 5);
-      // DONE TESTING
+    // TRAIN AND TEST
+    this._testData(data, min_support, min_conf, testRatio, 5);
+    // DONE TESTING
 
-      // Get final rules using all data
-      const optimalItemset = this._getOptimalItemset(data, min_support);
-      const rules = this._getRules(data, optimalItemset, min_conf); // get the rules
-      this.rules  = rules // set the rules for the object
-
-      fs.writeFile(this.rulesDirectory + RULES_FILENAME, jstr(rules), (err)=>{
-        if (err){
-          rej(err);
-        } else {
-          res();
-        }
-      }); // save the rules
-    });
+    // Get final rules using all data
+    const optimalItemset = this._getOptimalItemset(data, min_support);
+    const rules = this._getRules(data, optimalItemset, min_conf); // get the rules
+    this.rules = rules;
   }
 
   /**
-   * <p>Retrieves app category recommendations that best fit this location as an array. [train()]{@link AppRecom#train} must be called before this function.</p>
-   * <p>This function returns a JavaScript Promise.</p>
+   * <p>Retrieves app category recommendations that best fit this location as an array.</p>
    *
    * @param {String} locationCategory - the category of the location (e.g. 'cafe')
-   * @returns {Promise} appCategories - the categories of apps that match this location
    */
   getApps(location){
-    return new Promise((res, rej)=>{
-      fs.readFile(this.rulesDirectory + RULES_FILENAME, RULES_ENCODING, (err, data)=>{
-        if (err){
-          rej(err); // error if couldn't read
-        } else {
-          const rules = parse(data); // get the rules object
-          const appRecommendations = rules[location] ? rules[location] : [];
-          res(appRecommendations);
-        }
-      });
-    });
+    const appRecommendations = this.rules[location] ? this.rules[location] : [];
+    return appRecommendations;
   }
 
   /**
@@ -266,20 +237,20 @@ function parse(string){
 }
 
 function shuffle(array) {
-    /**
-     * <p>Stole from Christoph on Stack Overflow:
-     * {@link https://stackoverflow.com/a/962890}</p>
-     */
-    var tmp, current, top = array.length;
+  /*
+    Stole from Christoph on Stack Overflow:
+    https://stackoverflow.com/a/962890
+   */
+  var tmp, current, top = array.length;
 
-    if(top) while(--top) {
-        current = Math.floor(Math.random() * (top + 1));
-        tmp = array[current];
-        array[current] = array[top];
-        array[top] = tmp;
-    }
+  if(top) while(--top) {
+      current = Math.floor(Math.random() * (top + 1));
+      tmp = array[current];
+      array[current] = array[top];
+      array[top] = tmp;
+  }
 
-    return array;
+  return array;
 }
 
 // Module export
