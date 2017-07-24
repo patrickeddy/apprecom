@@ -1,6 +1,6 @@
 {
   "name": "apprecom",
-  "version": "0.9.41",
+  "version": "0.9.42",
   "description": "Location based app recommendation system.",
   "main": "./lib/AppRecom.js",
   "repository": {
@@ -24,6 +24,9 @@
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
+    "babel-preset-env": "^1.6.0"
+  },
+  "dependencies": {
     "babel-preset-env": "^1.6.0"
   }
 }
