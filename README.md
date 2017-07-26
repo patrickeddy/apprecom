@@ -25,4 +25,4 @@ Check out the documentation for more information [here](http://patrickeddy.githu
 
 ## Implementation
 
-Check out [ARI - an AppRecom CLI implementation](https://github.com/patrickeddy/ari) that uses this module.
+Check out [ARI - an AppRecom CLI implementation](https://github.com/patrickeddy/ari) or the [AppRecom Demo Android App](https://drive.google.com/open?id=0B5Y3QFf8MTMzMmdWWDFKbmFyMGs).
