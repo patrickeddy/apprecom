@@ -34,12 +34,12 @@ class AppRecom{
    * @param {Array<Object>} data - data to find association rules on.
    * @param {Decimal} min_support - the minimum support percentage for an itemset (0.0 - 1.0)
    * @param {Decimal} min_conf - the minimum confidence percentage for a rule (0.0 - 1.0)
-   * @param {Number} testRatio - ratio of training data to test data (0.0 - 1.0)
+   * @param {Number} test_ratio - ratio of training data to test data (0.0 - 1.0)
    * @returns rules
    */
-  train(data, min_support = 0.02, min_conf = 0.8, testRatio = 0.8){
+  train(data, min_support = 0.02, min_conf = 0.8, test_ratio = 0.8){
     // TRAIN AND TEST
-    this._testData(data, min_support, min_conf, testRatio, 5);
+    this._testData(data, min_support, min_conf, test_ratio, 5);
     // DONE TESTING
 
     // Get final rules using all data
@@ -62,11 +62,11 @@ class AppRecom{
    * Tests the learning by splitting into training and testing data and verifying results.
    * @private
    */
-  _testData(data, min_support, min_conf, testRatio, rounds){
+  _testData(data, min_support, min_conf, test_ratio, rounds){
     let averageError = 0;
 
     // Determines an integer # for training instances
-    const numTraining = Math.round((data.length) * testRatio);
+    const numTraining = Math.round((data.length) * test_ratio);
 
     for (let count = 0; count < rounds; count++) {
       let shuffleData = data.slice();
