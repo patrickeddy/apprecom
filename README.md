@@ -14,7 +14,7 @@ The two main methods are:
 
 ```javascript
 // Trains the system on your data
-train(data, min_support, min_conf, testRatio)
+train(data, min_support, min_conf, test_ratio)
 
 // Gets the app category recommendations for location
 // (after being trained)
